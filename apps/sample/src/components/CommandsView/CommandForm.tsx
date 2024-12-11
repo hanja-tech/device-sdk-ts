@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { Flex, Input, SelectInput, Switch, Text } from "@ledgerhq/react-ui";
+import {
+  Flex,
+  Input,
+  SelectInput,
+  Switch,
+  Text,
+} from "@ledgerhq/react-ui";
+import styled from "styled-components";
 
 import { type FieldType, useForm } from "@/hooks/useForm";
 
@@ -22,6 +29,17 @@ export function getValueSelectorFromEnum<
   return res;
 }
 
+const Item = styled(Flex).attrs({
+  px: 4,
+  py: 2,
+})`
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 50px;
+`;
+
 export function CommandForm<Args extends Record<string, FieldType>>({
   initialValues,
   onChange,
@@ -43,7 +61,9 @@ export function CommandForm<Args extends Record<string, FieldType>>({
     onChange(formValues);
   }, [formValues, onChange]);
 
-  if (!formValues) return null;
+  if (!formValues) {
+    return null;
+  }
 
   return (
     <Flex
@@ -54,13 +74,7 @@ export function CommandForm<Args extends Record<string, FieldType>>({
       columnGap={5}
     >
       {Object.entries(formValues).map(([key, value]) => (
-        <Flex
-          flexDirection="column"
-          key={key}
-          alignItems="flex-start"
-          rowGap={3}
-          columnGap={3}
-        >
+        <Item key={key}>
           {typeof value === "boolean" ? null : (
             <Text variant="paragraph" fontWeight="medium">
               {labelSelector && labelSelector[key] ? labelSelector[key] : key}
@@ -79,15 +93,14 @@ export function CommandForm<Args extends Record<string, FieldType>>({
               />
             </Flex>
           ) : typeof value === "boolean" ? (
-            <div data-testid={`input-switch_${key}`}>
-              <Switch
-                name="key"
-                checked={value}
-                onChange={() => setFormValue(key, !value)}
-                disabled={disabled}
-                label={key}
-              />
-            </div>
+            <Switch
+              data-testid={`input-switch_${key}`}
+              name="key"
+              checked={value}
+              onChange={() => setFormValue(key, !value)}
+              disabled={disabled}
+              label={key}
+            />
           ) : typeof value === "string" ? (
             <Input
               id={key}
@@ -95,6 +108,7 @@ export function CommandForm<Args extends Record<string, FieldType>>({
               placeholder={key}
               onChange={(newVal) => setFormValue(key, newVal)}
               disabled={disabled}
+              containerProps={{ style: { marginTop: "8px", width: "100%" } }}
               data-testid={`input-text_${key}`}
             />
           ) : (
@@ -109,7 +123,7 @@ export function CommandForm<Args extends Record<string, FieldType>>({
               disabled={disabled}
             />
           )}
-        </Flex>
+        </Item>
       ))}
     </Flex>
   );
