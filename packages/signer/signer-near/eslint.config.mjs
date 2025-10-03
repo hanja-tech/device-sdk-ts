@@ -1,4 +1,4 @@
-import config from "@ledgerhq/eslint-config-ldmk";
+import config from "@ledgerhq/eslint-config-dsdk";
 
 export default [
   ...config,

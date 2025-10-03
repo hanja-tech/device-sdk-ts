@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import {
   Flex,
+  Grid,
   Input,
   SelectInput,
   Switch,
@@ -9,6 +10,7 @@ import {
 import styled from "styled-components";
 
 import { type FieldType, useForm } from "@/hooks/useForm";
+import { Block } from "@/components/Block";
 
 export type ValueSelector<T extends FieldType> = Record<
   string,
@@ -66,13 +68,7 @@ export function CommandForm<Args extends Record<string, FieldType>>({
   }
 
   return (
-    <Flex
-      className={className}
-      flexDirection="column"
-      flexWrap="wrap"
-      rowGap={5}
-      columnGap={5}
-    >
+    <Grid className={className} columns={2}>
       {Object.entries(formValues).map(([key, value]) => (
         <Item key={key}>
           {typeof value === "boolean" ? null : (
@@ -125,6 +121,6 @@ export function CommandForm<Args extends Record<string, FieldType>>({
           )}
         </Item>
       ))}
-    </Flex>
+    </Grid>
   );
 }

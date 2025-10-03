@@ -4,8 +4,7 @@ import {
   InvalidStatusWordError,
   UnknownDeviceExchangeError,
 } from "@ledgerhq/device-management-kit";
-import { PublicKey } from "@near-js/crypto";
-import { Action, Stake } from "@near-js/transactions";
+import * as nearApi from "near-api-js";
 import { Just, Nothing } from "purify-ts";
 
 import { SignTransactionCommand } from "@internal/app-binder/command/SignTransactionCommand";
@@ -33,23 +32,23 @@ const SIGNATURE_DATA = Uint8Array.from([0x21, 0x42]);
 describe("SignTransactionTask", () => {
   describe("run", () => {
     afterEach(() => {
-      jest.resetAllMocks();
-      jest.clearAllMocks();
+      vi.resetAllMocks();
+      vi.clearAllMocks();
     });
     it("should return an error if invalid public key", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(Promise.resolve),
+        sendCommand: vi.fn(Promise.resolve),
       } as unknown as InternalApi;
       // when
       const publicKey = "bad-key";
       const task = new SignTransactionTask(api, {
         nonce: BigInt(0),
         actions: [
-          new Action({
-            stake: new Stake({
+          new nearApi.transactions.Action({
+            stake: new nearApi.transactions.Stake({
               stake: BigInt(42 * 1e23),
-              publicKey: PublicKey.fromString(
+              publicKey: nearApi.utils.PublicKey.fromString(
                 "ed25519:EFr6nRvgKKeteKoEH7hudt8UHYiu94Liq2yMM7x2AU9U",
               ),
             }),
@@ -72,7 +71,7 @@ describe("SignTransactionTask", () => {
     it("should sign a valid transaction", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({
               data: Just(SIGNATURE_DATA),
@@ -84,10 +83,10 @@ describe("SignTransactionTask", () => {
       const task = new SignTransactionTask(api, {
         nonce: BigInt(0),
         actions: [
-          new Action({
-            stake: new Stake({
+          new nearApi.transactions.Action({
+            stake: new nearApi.transactions.Stake({
               stake: BigInt(42 * 1e23),
-              publicKey: PublicKey.fromString(pubKey),
+              publicKey: nearApi.utils.PublicKey.fromString(pubKey),
             }),
           }),
         ],
@@ -114,7 +113,7 @@ describe("SignTransactionTask", () => {
     it("should return an error if no signature provided", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({
               data: Nothing,

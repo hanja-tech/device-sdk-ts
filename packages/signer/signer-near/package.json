@@ -1,8 +1,8 @@
 {
-  "name": "@ledgerhq/device-signer-kit-near",
-  "version": "0.0.1",
+  "name": "@hanja-tech/ledger-signer-near",
+  "version": "0.1.0",
   "license": "Apache-2.0",
-  "private": true,
+  "private": false,
   "exports": {
     ".": {
       "types": "./lib/types/index.d.ts",
@@ -30,14 +30,12 @@
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
-    "test:coverage": "pnpm test -- --coverage"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@near-js/crypto": "catalog:",
-    "@near-js/transactions": "catalog:",
-    "@near-js/utils": "catalog:",
-    "borsher": "catalog:",
+    "borsh": "catalog:",
     "inversify": "catalog:",
     "purify-ts": "catalog:",
     "reflect-metadata": "catalog:",
@@ -49,9 +47,12 @@
     "@ledgerhq/ldmk-tool": "workspace:*",
     "@ledgerhq/prettier-config-dsdk": "workspace:*",
     "@ledgerhq/tsconfig-dsdk": "workspace:*",
+    "@ledgerhq/vitest-config-dmk": "workspace:*",
+    "near-api-js": "5.0.0",
     "ts-node": "catalog:"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "workspace:*"
+    "@ledgerhq/device-management-kit": "0.9.0",
+    "near-api-js": "5.0.0"
   }
 }

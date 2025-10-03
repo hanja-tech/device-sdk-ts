@@ -57,13 +57,13 @@ const EXPECTED_HELLO_WORLD_WITH_CALLBACK = Uint8Array.from([
 describe("SignMessageTask", () => {
   describe("run", () => {
     afterEach(() => {
-      jest.resetAllMocks();
-      jest.clearAllMocks();
+      vi.resetAllMocks();
+      vi.clearAllMocks();
     });
     it("should sign a valid buffer with given nonce", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             Promise.resolve(
               CommandResultFactory({
@@ -99,7 +99,7 @@ describe("SignMessageTask", () => {
     it("should sign a valid buffer with callback", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({ data: Just(Uint8Array.from([0x42, 0x21])) }),
           ),
@@ -131,7 +131,7 @@ describe("SignMessageTask", () => {
     it("should sign a valid buffer without callback", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({ data: Just(Uint8Array.from([0x42, 0x21])) }),
           ),
@@ -161,7 +161,7 @@ describe("SignMessageTask", () => {
     });
     it("should return an error if no signature", async () => {
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({
               data: Nothing,

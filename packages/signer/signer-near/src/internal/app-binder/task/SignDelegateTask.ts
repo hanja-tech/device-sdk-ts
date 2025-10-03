@@ -6,9 +6,8 @@ import {
   InvalidStatusWordError,
   isSuccessCommandResult,
 } from "@ledgerhq/device-management-kit";
-import { PublicKey } from "@near-js/crypto";
-import { type Action, SCHEMA } from "@near-js/transactions";
-import { BorshSchema, borshSerialize } from "borsher";
+import { serialize } from "borsh";
+import * as nearApi from "near-api-js";
 
 import { type NearAppErrorCodes } from "@internal/app-binder/command/NearAppCommand";
 import { SignDelegateCommand } from "@internal/app-binder/command/SignDelegateCommand";
@@ -19,7 +18,7 @@ export type SignDelegateTaskArgs = {
   derivationPath: string;
   maxBlockHeight: bigint;
   nonce: bigint;
-  actions: Action[];
+  actions: nearApi.transactions.Action[];
   senderId: string;
   receiverId: string;
 };
@@ -63,7 +62,7 @@ export class SignDelegateTask {
     const paths = DerivationPathUtils.splitPath(derivationPath);
     let publicKey;
     try {
-      publicKey = PublicKey.fromString(pubKey);
+      publicKey = nearApi.utils.PublicKey.fromString(pubKey);
     } catch {
       return Promise.resolve(
         CommandResultFactory({
@@ -74,7 +73,7 @@ export class SignDelegateTask {
     // get borsh delegate action
     let tx: Uint8Array;
     try {
-      tx = borshSerialize(BorshSchema.fromSchema(SCHEMA.DelegateAction), {
+      tx = serialize(nearApi.transactions.SCHEMA.DelegateAction, {
         senderId,
         publicKey,
         nonce,

@@ -6,7 +6,7 @@ import {
   InvalidStatusWordError,
   isSuccessCommandResult,
 } from "@ledgerhq/device-management-kit";
-import { BorshSchema, borshSerialize } from "borsher";
+import { serialize } from "borsh";
 
 import { type NearAppErrorCodes } from "@internal/app-binder/command/NearAppCommand";
 import { SignMessageCommand } from "@internal/app-binder/command/SignMessageCommand";
@@ -52,16 +52,16 @@ export class SignMessageTask {
       builder.add32BitUIntToData(path);
     });
     // add borsh message
-    builder.addBufferToData(borshSerialize(BorshSchema.String, message));
+    builder.addBufferToData(serialize("string", message));
     // add nonce
     builder.addBufferToData(nonce);
     // add borsh recipient id
-    builder.addBufferToData(borshSerialize(BorshSchema.String, recipient));
+    builder.addBufferToData(serialize("string", recipient));
 
     if (callbackUrl) {
       // add 1 + borsh callback url
       builder.add8BitUIntToData(1);
-      builder.addBufferToData(borshSerialize(BorshSchema.String, callbackUrl));
+      builder.addBufferToData(serialize("string", callbackUrl));
     } else {
       // add 0
       builder.add8BitUIntToData(0);

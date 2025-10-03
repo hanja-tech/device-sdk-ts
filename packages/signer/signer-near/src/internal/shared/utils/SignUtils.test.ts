@@ -18,14 +18,14 @@ const CHUNK_128 = Uint8Array.from(new Array(128).keys());
 describe("SignUtils", () => {
   describe("signInChunks", () => {
     afterEach(() => {
-      jest.resetAllMocks();
-      jest.clearAllMocks();
+      vi.resetAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should send command for 1 chunk of max chunk size", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({
               data: CHUNK_32,
@@ -49,7 +49,7 @@ describe("SignUtils", () => {
 
     it("should send command for 1 chunk smaller than max chunk size", async () => {
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({
               data: CHUNK_128,
@@ -74,7 +74,7 @@ describe("SignUtils", () => {
     it("should send 4 commands for 4 chunks of max chunk size", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           CommandResultFactory({
             data: Uint8Array.from(CHUNK_32),
           }),
@@ -118,7 +118,7 @@ describe("SignUtils", () => {
     it("should return command error", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           CommandResultFactory({
             error: new UnknownDeviceExchangeError("Error"),
           }),

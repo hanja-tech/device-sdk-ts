@@ -10,6 +10,6 @@ export class SignMessageCommand
   implements Command<SignMessageCommandResponse, SignMessageCommandArgs>
 {
   constructor(readonly args: SignCommandArgs) {}
-  getApdu = jest.fn();
-  parseResponse = jest.fn();
+  getApdu = vi.fn();
+  parseResponse = vi.fn();
 }

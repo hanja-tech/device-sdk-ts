@@ -32,7 +32,10 @@ export class DefaultSignerNear implements SignerNear {
     @inject(externalTypes.SessionId) private _sessionId: string,
   ) {}
 
-  getVersion({ inspect }: DeviceActionOptions): GetVersionDAReturnType {
+  getVersion({
+    inspect,
+    skipOpenApp = false,
+  }: DeviceActionOptions): GetVersionDAReturnType {
     return this._dmk.executeDeviceAction({
       sessionId: this._sessionId,
       deviceAction: new SendCommandInAppDeviceAction({
@@ -40,6 +43,7 @@ export class DefaultSignerNear implements SignerNear {
           command: new GetVersionCommand(),
           appName: "NEAR",
           requiredUserInteraction: UserInteractionRequired.None,
+          skipOpenApp,
         },
         inspect,
       }),
@@ -47,7 +51,7 @@ export class DefaultSignerNear implements SignerNear {
   }
   getWalletId(
     derivationPath: string,
-    { inspect }: DeviceActionOptions,
+    { inspect, skipOpenApp = false }: DeviceActionOptions,
   ): GetWalletIdDAReturnType {
     return this._dmk.executeDeviceAction({
       sessionId: this._sessionId,
@@ -58,6 +62,7 @@ export class DefaultSignerNear implements SignerNear {
           }),
           appName: "NEAR",
           requiredUserInteraction: UserInteractionRequired.VerifyAddress,
+          skipOpenApp,
         },
         inspect,
       }),
@@ -65,7 +70,11 @@ export class DefaultSignerNear implements SignerNear {
   }
   getPublicKey(
     derivationPath: string,
-    { inspect, checkOnDevice = false }: AddressOptions & DeviceActionOptions,
+    {
+      inspect,
+      checkOnDevice = false,
+      skipOpenApp = false,
+    }: AddressOptions & DeviceActionOptions,
   ): GetPublicKeyDAReturnType {
     return this._dmk.executeDeviceAction({
       sessionId: this._sessionId,
@@ -76,6 +85,7 @@ export class DefaultSignerNear implements SignerNear {
           requiredUserInteraction: checkOnDevice
             ? UserInteractionRequired.VerifyAddress
             : UserInteractionRequired.None,
+          skipOpenApp,
         },
         inspect,
       }),

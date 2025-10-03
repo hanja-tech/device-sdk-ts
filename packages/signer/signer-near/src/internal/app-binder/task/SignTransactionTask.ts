@@ -7,9 +7,8 @@ import {
   isSuccessCommandResult,
   UnknownDeviceExchangeError,
 } from "@ledgerhq/device-management-kit";
-import { PublicKey } from "@near-js/crypto";
-import { type Action, SCHEMA } from "@near-js/transactions";
-import { BorshSchema, borshSerialize } from "borsher";
+import { serialize } from "borsh";
+import * as nearApi from "near-api-js";
 
 import { type NearAppErrorCodes } from "@internal/app-binder/command/NearAppCommand";
 import { SignTransactionCommand } from "@internal/app-binder/command/SignTransactionCommand";
@@ -23,7 +22,7 @@ export type SignTransactionTaskArgs = {
   nonce: bigint;
   signerId: string;
   receiverId: string;
-  actions: Action[];
+  actions: nearApi.transactions.Action[];
   blockHash: Uint8Array;
 };
 
@@ -45,7 +44,7 @@ export class SignTransactionTask {
     let publicKey;
 
     try {
-      publicKey = PublicKey.fromString(pubKey);
+      publicKey = nearApi.utils.PublicKey.fromString(pubKey);
     } catch {
       return Promise.resolve(
         CommandResultFactory({
@@ -53,7 +52,7 @@ export class SignTransactionTask {
         }),
       );
     }
-    const tx = borshSerialize(BorshSchema.fromSchema(SCHEMA.Transaction), {
+    const tx = serialize(nearApi.transactions.SCHEMA.Transaction, {
       signerId,
       publicKey,
       nonce,

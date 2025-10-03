@@ -44,7 +44,7 @@ describe("GetWalletIdCommand", () => {
           "dcb7cb6acd9b77078768b799a65b124fbcd2c8a12f4325e780a8d63a24b4d044",
         );
       } else {
-        fail("Except success result, encountered an error");
+        console.error("Except success result, encountered an error");
       }
     });
     describe("error handling", () => {

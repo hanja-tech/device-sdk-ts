@@ -4,7 +4,7 @@ import {
   InvalidStatusWordError,
   isSuccessCommandResult,
 } from "@ledgerhq/device-management-kit";
-import { Action, Transfer } from "@near-js/transactions";
+import * as nearApi from "near-api-js";
 import { Just } from "purify-ts";
 
 import { SignDelegateCommand } from "@internal/app-binder/command/SignDelegateCommand";
@@ -26,13 +26,13 @@ const SIGNATURE_DATA = [0x21, 0x42];
 describe("SignDelegateTask", () => {
   describe("run", () => {
     afterEach(() => {
-      jest.resetAllMocks();
-      jest.clearAllMocks();
+      vi.resetAllMocks();
+      vi.clearAllMocks();
     });
     it("should return an error if invalid public key", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(Promise.resolve),
+        sendCommand: vi.fn(Promise.resolve),
       } as unknown as InternalApi;
       // when
       const publicKey = "bad-key";
@@ -58,7 +58,7 @@ describe("SignDelegateTask", () => {
     it("should sign a valid delegate action", async () => {
       // given
       const api = {
-        sendCommand: jest.fn(() =>
+        sendCommand: vi.fn(() =>
           Promise.resolve(
             CommandResultFactory({
               data: Just(Uint8Array.from(SIGNATURE_DATA)),
@@ -76,7 +76,11 @@ describe("SignDelegateTask", () => {
       // when
       const result = await new SignDelegateTask(api, {
         nonce,
-        actions: [new Action({ transfer: new Transfer({ deposit }) })],
+        actions: [
+          new nearApi.transactions.Action({
+            transfer: new nearApi.transactions.Transfer({ deposit }),
+          }),
+        ],
         maxBlockHeight,
         receiverId,
         senderId,

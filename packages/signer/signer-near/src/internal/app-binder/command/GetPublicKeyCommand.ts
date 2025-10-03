@@ -9,7 +9,6 @@ import {
   CommandUtils,
   InvalidStatusWordError,
 } from "@ledgerhq/device-management-kit";
-import { baseEncode } from "@near-js/utils";
 
 import {
   type GetPublicKeyCommandArgs,
@@ -20,6 +19,7 @@ import {
   type NearAppErrorCodes,
 } from "@internal/app-binder/command/NearAppCommand";
 import { DerivationPathUtils } from "@internal/shared/utils/DerivationPathUtils";
+import * as nearApi from "near-api-js";
 
 const PUBKEY_LENGTH = 32;
 
@@ -75,7 +75,7 @@ export class GetPublicKeyCommand extends NearAppCommand<
     }
 
     return CommandResultFactory({
-      data: baseEncode(rawPublicKey),
+      data: nearApi.utils.serialize.base_encode(rawPublicKey),
     });
   }
 }
