@@ -2,7 +2,7 @@
   "name": "@hanja-tech/ledger-device-transport-kit-web-hid",
   "version": "1.2.0",
   "license": "Apache-2.0",
-  "private": true,
+  "private": false,
   "exports": {
     ".": {
       "types": "./lib/types/index.d.ts",
@@ -48,7 +48,7 @@
     "ts-node": "catalog:"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "workspace:*",
+    "@ledgerhq/device-management-kit": "^0.9.1",
     "rxjs": "catalog:"
   }
 }
