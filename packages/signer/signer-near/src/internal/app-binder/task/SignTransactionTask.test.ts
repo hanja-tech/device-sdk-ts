@@ -2,7 +2,6 @@ import {
   CommandResultFactory,
   type InternalApi,
   InvalidStatusWordError,
-  UnknownDeviceExchangeError,
 } from "@ledgerhq/device-management-kit";
 import * as nearApi from "near-api-js";
 import { Just, Nothing } from "purify-ts";
@@ -35,39 +34,6 @@ describe("SignTransactionTask", () => {
       vi.resetAllMocks();
       vi.clearAllMocks();
     });
-    it("should return an error if invalid public key", async () => {
-      // given
-      const api = {
-        sendCommand: vi.fn(Promise.resolve),
-      } as unknown as InternalApi;
-      // when
-      const publicKey = "bad-key";
-      const task = new SignTransactionTask(api, {
-        nonce: BigInt(0),
-        actions: [
-          new nearApi.transactions.Action({
-            stake: new nearApi.transactions.Stake({
-              stake: BigInt(42 * 1e23),
-              publicKey: nearApi.utils.PublicKey.fromString(
-                "ed25519:EFr6nRvgKKeteKoEH7hudt8UHYiu94Liq2yMM7x2AU9U",
-              ),
-            }),
-          }),
-        ],
-        blockHash: Uint8Array.from(new Array(32).fill(0)),
-        receiverId: "alice.near",
-        signerId: "bob.near",
-        derivationPath: "44'/397'/0'/0'/1",
-      });
-      // then
-      const result = await task.run(publicKey);
-      // expect
-      expect(result).toStrictEqual(
-        CommandResultFactory({
-          error: new UnknownDeviceExchangeError("Invalid public key"),
-        }),
-      );
-    });
     it("should sign a valid transaction", async () => {
       // given
       const api = {
@@ -79,14 +45,16 @@ describe("SignTransactionTask", () => {
           ),
         ),
       } as unknown as InternalApi;
-      const pubKey = "ed25519:EFr6nRvgKKeteKoEH7hudt8UHYiu94Liq2yMM7x2AU9U";
+      const pubKey = nearApi.utils.PublicKey.fromString(
+        "ed25519:EFr6nRvgKKeteKoEH7hudt8UHYiu94Liq2yMM7x2AU9U",
+      );
       const task = new SignTransactionTask(api, {
         nonce: BigInt(0),
         actions: [
           new nearApi.transactions.Action({
             stake: new nearApi.transactions.Stake({
               stake: BigInt(42 * 1e23),
-              publicKey: nearApi.utils.PublicKey.fromString(pubKey),
+              publicKey: pubKey,
             }),
           }),
         ],
@@ -129,7 +97,9 @@ describe("SignTransactionTask", () => {
         signerId: "",
         derivationPath: "",
       });
-      const pubKey = "ed25519:EFr6nRvgKKeteKoEH7hudt8UHYiu94Liq2yMM7x2AU9U";
+      const pubKey = nearApi.utils.PublicKey.fromString(
+        "ed25519:EFr6nRvgKKeteKoEH7hudt8UHYiu94Liq2yMM7x2AU9U",
+      );
       // when
       const result = await task.run(pubKey);
       // then

@@ -9,11 +9,12 @@ import {
 
 import { type NearAppErrorCodes } from "@internal/app-binder/command/NearAppCommand";
 import { type SignTransactionTaskArgs } from "@internal/app-binder/task/SignTransactionTask";
+import type NearApi from "near-api-js";
 
 export type SignTransactionDAOutput = Uint8Array;
 
 export type SignTransactionDAInput = {
-  args: SignTransactionTaskArgs;
+  args: SignTransactionTaskArgs & { publicKey?: NearApi.utils.PublicKey };
 };
 
 export type SignTransactionDAError =
@@ -37,7 +38,7 @@ export type SignTransactionDAState = DeviceActionState<
 export type SignTransactionDAInternalState = {
   readonly error: SignTransactionDAError | null;
   readonly signature: Uint8Array | null;
-  readonly publicKey: string | null;
+  readonly publicKey: NearApi.utils.PublicKey | null;
 };
 
 export type SignTransactionDAReturnType = ExecuteDeviceActionReturnType<

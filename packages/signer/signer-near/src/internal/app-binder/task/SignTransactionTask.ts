@@ -5,7 +5,6 @@ import {
   type InternalApi,
   InvalidStatusWordError,
   isSuccessCommandResult,
-  UnknownDeviceExchangeError,
 } from "@ledgerhq/device-management-kit";
 import { serialize } from "borsh";
 import * as nearApi from "near-api-js";
@@ -36,22 +35,12 @@ export class SignTransactionTask {
   }
 
   async run(
-    pubKey: string,
+    publicKey: nearApi.utils.PublicKey,
   ): Promise<CommandResult<Uint8Array, NearAppErrorCodes>> {
     const { derivationPath, signerId, actions, nonce, receiverId, blockHash } =
       this._args;
     const paths = DerivationPathUtils.splitPath(derivationPath);
-    let publicKey;
 
-    try {
-      publicKey = nearApi.utils.PublicKey.fromString(pubKey);
-    } catch {
-      return Promise.resolve(
-        CommandResultFactory({
-          error: new UnknownDeviceExchangeError("Invalid public key"),
-        }),
-      );
-    }
     const tx = serialize(nearApi.transactions.SCHEMA.Transaction, {
       signerId,
       publicKey,

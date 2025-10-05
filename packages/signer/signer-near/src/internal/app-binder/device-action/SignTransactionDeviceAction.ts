@@ -9,6 +9,7 @@ import {
   UserInteractionRequired,
   XStateDeviceAction,
 } from "@ledgerhq/device-management-kit";
+import NearApi from "near-api-js";
 import { Left, Right } from "purify-ts";
 import { assign, fromPromise, setup } from "xstate";
 
@@ -31,7 +32,7 @@ export type MachineDependencies = {
     input: { derivationPath: string };
   }) => Promise<CommandResult<string, NearAppErrorCodes>>;
   readonly signTransactionTask: (args0: {
-    input: { publicKey: string } & SignTransactionTaskArgs;
+    input: { publicKey: NearApi.utils.PublicKey } & SignTransactionTaskArgs;
   }) => Promise<CommandResult<Uint8Array, NearAppErrorCodes>>;
 };
 
@@ -77,6 +78,7 @@ export class SignTransactionDeviceAction extends XStateDeviceAction<
       },
       guards: {
         noInternalError: ({ context }) => context._internalState.error === null,
+        noPublicKey: ({ context }) => context._internalState.publicKey === null,
       },
       actions: {
         assignErrorFromEvent: assign({
@@ -98,7 +100,7 @@ export class SignTransactionDeviceAction extends XStateDeviceAction<
           _internalState: {
             error: null,
             signature: null,
-            publicKey: null,
+            publicKey: input.args.publicKey ?? null,
           },
         };
       },
@@ -137,10 +139,19 @@ export class SignTransactionDeviceAction extends XStateDeviceAction<
         CheckOpenAppDeviceActionResult: {
           always: [
             {
-              target: "GetPublicKey",
+              target: "CheckPublicKeyArg",
               guard: "noInternalError",
             },
             "Error",
+          ],
+        },
+        CheckPublicKeyArg: {
+          always: [
+            {
+              target: "GetPublicKey",
+              guard: "noPublicKey",
+            },
+            "SignTransactionTask",
           ],
         },
         GetPublicKey: {
@@ -158,7 +169,9 @@ export class SignTransactionDeviceAction extends XStateDeviceAction<
                     if (isSuccessCommandResult(event.output)) {
                       return {
                         ...context._internalState,
-                        publicKey: event.output.data,
+                        publicKey: NearApi.utils.PublicKey.fromString(
+                          event.output.data,
+                        ),
                       };
                     }
                     return {
@@ -263,7 +276,7 @@ export class SignTransactionDeviceAction extends XStateDeviceAction<
     const signTransactionTask = async ({
       input: { publicKey, ...args },
     }: {
-      input: { publicKey: string } & SignTransactionTaskArgs;
+      input: { publicKey: NearApi.utils.PublicKey } & SignTransactionTaskArgs;
     }) => new SignTransactionTask(internalApi, args).run(publicKey);
 
     return {
