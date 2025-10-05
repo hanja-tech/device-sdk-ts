@@ -52,7 +52,7 @@
     "ts-node": "catalog:"
   },
   "peerDependencies": {
-    "@ledgerhq/device-management-kit": "0.9.1",
+    "@ledgerhq/device-management-kit": "workspace:*",
     "near-api-js": "5.0.0"
   }
 }
