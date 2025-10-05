@@ -1,5 +1,11 @@
 # @hanja-tech/ledger-signer-near
 
+## 0.3.0
+
+### Minor Changes
+
+- [`f542f7f`](https://github.com/LedgerHQ/device-sdk-ts/commit/f542f7f37f12605c207305ce04bb7bf5b743828f) Thanks [@jazalizil](https://github.com/jazalizil)! - Skip get public key on sign if tx has a public key
+
 ## 0.2.0
 
 ### Minor Changes
